@@ -9,7 +9,7 @@
 
 import math
 from math import sin
-from random import uniform as randuni
+from random import random, uniform as randuni
 
 
 class Oscillator(object):
@@ -87,8 +87,16 @@ class Oscillator(object):
             value = 2.0 * (abs(value) - 0.5)
         
         elif mode == 4: # White Noise with uniform random 
+            value = random() # randuni(-1, 1)
+            return value
+
+        elif mode == 5: # Pink Noise with uniform random 
             value = randuni(-1, 1)
-          
+            return value
+
+        elif mode == 6: # Silence
+            return value
+           
         self._phase += self._phase_inc
         
         if self._phase >= twoPI:

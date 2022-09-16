@@ -25,7 +25,7 @@ class FastSynth(object):
         self.playing = False
         self._thr = None
         self._running = False
-        self.osc = None
+        self.osc = osc.Oscillator()
         self._proc_cback = self._proc_callback
         self.init_osc()
 
@@ -36,12 +36,23 @@ class FastSynth(object):
         init oscillators 
         """
 
-        self.osc = osc.Oscillator()
-        self.osc.set_muted(False)
-        self.osc.set_mode(4) # Sine Osc 
+        if self.osc:
+            self.osc.set_muted(False)
+            self.osc.set_mode(0) # Sine Osc 
 
     #-------------------------------------------
-        
+
+    def set_params(self, mode=0, muted=False):
+        """
+        change oscillators params
+        """
+
+        if self.osc:
+            self.osc.set_mode(mode) 
+            self.osc.set_muted(muted)
+
+    #-------------------------------------------
+         
     def _proc_callback(self):
         """
         The User Callback function must be called by the threading loop

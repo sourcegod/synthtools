@@ -15,7 +15,7 @@ from os.path import expanduser
 
 _session = PromptSession(history = FileHistory(expanduser('~/.synth_history')))
 
-def main0():
+def _main0():
     """
     Deprecated function
     """
@@ -45,6 +45,7 @@ def main():
     """
 
     synth = syn.FastSynth()
+    synth.set_params(mode=5, muted=False) # mode 4: White Noise
     synth.start_engine()
     while 1:
         val_str = _session.prompt("-> ")
