@@ -20,18 +20,19 @@ def beep():
 #-------------------------------------------
 
 
-class MyWindow(Gtk.Window):
+class MainWindow(Gtk.Window):
     def __init__(self):
         super().__init__(title="Hello World")
 
-        self.iap = _iap.InterfaceApp()
-        self.iap.init_app()
+        self.iap = None
         self.set_default_size(800, 800)
         self.connect("destroy", self.on_destroy)
         self.connect("key-press-event", self.on_keypress)
         self.connect("key-release-event", self.on_keyrelease)
 
         self.create_ui()
+        # init Interface Synth
+        self.init_app()
         self.show_all()
 
     #-------------------------------------------
@@ -64,9 +65,12 @@ class MyWindow(Gtk.Window):
         box.add(self.entry)
         """
 
+        """
         bt1 = Gtk.Button(label="Click Here")
         bt1.connect("clicked", self.on_click)
         box.add(bt1)
+        """
+        
         tv = Gtk.TextView()
         self.buf = tv.get_buffer()
         self.buf.set_text("-> ")
@@ -76,8 +80,19 @@ class MyWindow(Gtk.Window):
     #-------------------------------------------
 
     def on_destroy(self, wid):
-        self.iap.close_app()
+        if self.iap: 
+            self.iap.close_app()
+        print("Bye Bye!")
         Gtk.main_quit()
+
+    #-------------------------------------------
+
+    def init_app(self):
+        """
+        init the Synth Interface
+        """
+        self.iap = _iap.InterfaceApp()
+        self.iap.init_app()
 
     #-------------------------------------------
 
@@ -118,6 +133,7 @@ class MyWindow(Gtk.Window):
         Note: pygtk do not report error when klass or attribute is not found.
         """
 
+        if self.iap is None: return
         keyname = Gdk.keyval_name(evt.keyval)
         if keyname == "q":
             beep()
@@ -152,6 +168,7 @@ class MyWindow(Gtk.Window):
 
 
     def on_keyrelease(self, widget, evt):
+        if self.iap is None: return
         keyname = Gdk.keyval_name(evt.keyval)
         if keyname == "h" or keyname == "KP_0":
             self.iap.note_off()
@@ -162,7 +179,8 @@ class MyWindow(Gtk.Window):
     #-------------------------------------------
 
 #========================================
+if __name__ == "__main__":
+    win = MainWindow()
+    Gtk.main()
 
-win = MyWindow()
-Gtk.main()
-
+#-------------------------------------------
