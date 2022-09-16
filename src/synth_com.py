@@ -1,70 +1,67 @@
 #!/usr/bin/python3
 """
     File: synth_com.py
-    Test for fastsynth module
+    Interactif shell for fastsynth module
     Date: Fri, 16/09/2022
     Author: Coolbrother
 """
-import fastsynth as syn
 
 from prompt_toolkit import prompt,print_formatted_text
 from prompt_toolkit import prompt, PromptSession, patch_stdout
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.completion import WordCompleter, PathCompleter
 from os.path import expanduser
+import interfaceapp as _iap
 
 _session = PromptSession(history = FileHistory(expanduser('~/.synth_history')))
 
-def _main0():
-    """
-    Deprecated function
-    """
+class SynthCom(object):
+    """ FastSynth commandline manager """
+    def __init__(self):
+        self.iap = _iap.InterfaceApp()
 
-    synth = syn.FastSynth()
-    synth.start_engine()
-    while 1:
-        val_str = input("-> ")
-        if val_str == "Q":
-            synth.stop_engine()
-            print("Bye Bye!")
-            syn.beep()
-            break
-        elif val_str == "p":
-            synth.note_on()
-        elif val_str == "s":
-            synth.note_off()
+    #-------------------------------------------
 
+    def display(self, msg=""):
+        if msg:
+            print(msg)
         else:
-            syn.beep()
+            # beep
+            print("\a")
 
+    #-------------------------------------------
+
+    def main(self):
+        """
+        Using Prompt Toolkit Module as Input
+        """
+
+        if self.iap is None: return
+        iap = self.iap
+        iap.init_app()
+
+        while 1:
+            val_str = _session.prompt("-> ")
+            if val_str == "Q":
+                iap.close_app()
+                msg = "Bye Bye!"
+                self.display(msg)
+                break
+
+            elif val_str == "p":
+                iap.note_on()
+            elif val_str == "s":
+                iap.note_off()
+
+            else:
+                iap.beep()
+    
 #-------------------------------------------
 
-def main():
-    """
-    Using Prompt Toolkit Module as Input
-    """
-
-    synth = syn.FastSynth()
-    synth.set_params(mode=5, muted=False) # mode 4: White Noise
-    synth.start_engine()
-    while 1:
-        val_str = _session.prompt("-> ")
-        if val_str == "Q":
-            synth.stop_engine()
-            print("Bye Bye!")
-            syn.beep()
-            break
-        elif val_str == "p":
-            synth.note_on()
-        elif val_str == "s":
-            synth.note_off()
-
-        else:
-            syn.beep()
-
-#-------------------------------------------
+#========================================
 
 
 if __name__ == "__main__":
-    main()
-    # input("It's OK...")
+    app = SynthCom()
+    app.main()
+   
