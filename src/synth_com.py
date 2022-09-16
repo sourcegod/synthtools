@@ -7,7 +7,19 @@
 """
 import fastsynth as syn
 
-def main():
+from prompt_toolkit import prompt,print_formatted_text
+from prompt_toolkit import prompt, PromptSession, patch_stdout
+from prompt_toolkit.history import FileHistory
+from prompt_toolkit.completion import WordCompleter, PathCompleter
+from os.path import expanduser
+
+_session = PromptSession(history = FileHistory(expanduser('~/.synth_history')))
+
+def main0():
+    """
+    Deprecated function
+    """
+
     synth = syn.FastSynth()
     synth.start_engine()
     while 1:
@@ -26,6 +38,31 @@ def main():
             syn.beep()
 
 #-------------------------------------------
+
+def main():
+    """
+    Using Prompt Toolkit Module as Input
+    """
+
+    synth = syn.FastSynth()
+    synth.start_engine()
+    while 1:
+        val_str = _session.prompt("-> ")
+        if val_str == "Q":
+            synth.stop_engine()
+            print("Bye Bye!")
+            syn.beep()
+            break
+        elif val_str == "p":
+            synth.note_on()
+        elif val_str == "s":
+            synth.note_off()
+
+        else:
+            syn.beep()
+
+#-------------------------------------------
+
 
 if __name__ == "__main__":
     main()
