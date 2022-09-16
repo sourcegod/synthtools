@@ -6,8 +6,11 @@
     Author: Coolbrother
 
 """
+
 import math
 from math import sin
+from random import uniform as randuni
+
 
 class Oscillator(object):
     def __init__(self):
@@ -82,6 +85,9 @@ class Oscillator(object):
         elif mode == 3: # Triangle Osc
             value = -1.0 + (2.0 * self._phase / twoPI)
             value = 2.0 * (abs(value) - 0.5)
+        
+        elif mode == 4: # White Noise with uniform random 
+            value = randuni(-1, 1)
           
         self._phase += self._phase_inc
         

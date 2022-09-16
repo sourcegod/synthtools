@@ -38,7 +38,7 @@ class FastSynth(object):
 
         self.osc = osc.Oscillator()
         self.osc.set_muted(False)
-        self.osc.set_mode(0) # Sine Osc 
+        self.osc.set_mode(4) # Sine Osc 
 
     #-------------------------------------------
         
