@@ -15,6 +15,12 @@ from random import random, uniform as randuni
 class Oscillator(object):
     def __init__(self):
         self._mode =0 # oscillator mode
+        self._mode_lst = [
+                "Sine", "Square", "SawTooth",
+                "Triangle", "White Noise", "Pink Noise",
+                "Silence",
+            ]
+        self._max_mode = len(self._mode_lst)
         self._PI = math.pi
         self._twoPI = self._PI * 2
         self._freq = 440.0
@@ -55,7 +61,7 @@ class Oscillator(object):
 
     def generate(buffer, nb_frames):
         twoPI = self._twoPI
-        if mode == 0: # sine oscillator
+        if self._mode == 0: # sine oscillator
             for i in range(nb_frames):
                 buffer[i] = sin(self._phase)
                 self._phase += self._phase_inc  
@@ -73,15 +79,15 @@ class Oscillator(object):
         twoPI = self._twoPI
         if mode == 0: # sine osc
             value = sin(self._phase)
-        
-        elif mode == 1: # SAW osc
-            value = 1.0 - (2.0 * self._phase / twoPI)
-
-        elif mode == 2: # Square Osc
+        elif mode == 1: # Square Osc
             if self._phase <= PI:
                 value = 1.0
             else:
                 value = -1.0
+
+        elif mode == 2: # SAW osc
+            value = 1.0 - (2.0 * self._phase / twoPI)
+
         elif mode == 3: # Triangle Osc
             value = -1.0 + (2.0 * self._phase / twoPI)
             value = 2.0 * (abs(value) - 0.5)

@@ -22,7 +22,7 @@ def beep():
 
 class MainWindow(Gtk.Window):
     def __init__(self):
-        super().__init__(title="Hello World")
+        super().__init__(title="Fast Synth")
 
         self.iap = None
         self.set_default_size(800, 800)
@@ -48,15 +48,18 @@ class MainWindow(Gtk.Window):
         self.add(box)
 
         # Simple Combobox
-        lst = ["coucou", "man", "yes"]
-        combo = Gtk.ComboBoxText()
-        for item in lst:
-            combo.append_text(item)
+        # lst = ["coucou", "man", "yes"]
+        self._combo = Gtk.ComboBoxText()
+        
+        # filling the combo later
+        """
+        for item in mode_lst:
+            self._combo.append_text(item)
+        self._combo.set_active(0)
+        """
 
-        combo.set_active(0)
-        combo.connect("changed", self.on_change)
-        # combo.connect("key-release-event", self.on_keyrelease)
-        box.add(combo)
+        self._combo.connect("changed", self.on_change_combo)
+        box.add(self._combo)
         
         """
         self.entry = Gtk.Entry()
@@ -93,6 +96,12 @@ class MainWindow(Gtk.Window):
         """
         self.iap = _iap.InterfaceApp()
         self.iap.init_app()
+        if self.iap and self._combo:
+            mode_lst = self.iap.get_mode_list()
+            for item in mode_lst:
+                self._combo.append_text(item)
+            self._combo.set_active(0)
+
 
     #-------------------------------------------
 
@@ -121,10 +130,18 @@ class MainWindow(Gtk.Window):
 
     #-------------------------------------------
 
-    def on_change(self, widget):
-        print("Hello World")
+    def on_change_combo(self, widget):
+        # text = widget.get_active_text()
+        index = widget.get_active()
+        self.buf.set_text(f"Combo Index: {index}")
+        if self.iap:
+            self.iap.set_mode(index)
+
+        """
+        # print("Hello World")
         if widget.get_text_length() <= 3:
             beep()
+        """
 
     #-------------------------------------------
 
@@ -135,7 +152,7 @@ class MainWindow(Gtk.Window):
 
         if self.iap is None: return
         keyname = Gdk.keyval_name(evt.keyval)
-        if keyname == "q":
+        if keyname == "Q":
             beep()
         elif keyname == "h":
             beep()
@@ -158,7 +175,7 @@ class MainWindow(Gtk.Window):
         if is_alt:
             beep()
 
-        self.buf.set_text(f"Key: {keyname}")
+        # self.buf.set_text(f"Key: {keyname}")
         # self.buf.insert(0, f"{keyname}")
         # beep()
         # Gtk.Window.Beep()

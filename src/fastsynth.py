@@ -47,12 +47,36 @@ class FastSynth(object):
         change oscillators params
         """
 
-        if self.osc:
-            self.osc.set_mode(mode) 
-            self.osc.set_muted(muted)
+        if not self.osc: return
+        
+        self.osc.set_mode(mode) 
+        self.osc.set_muted(muted)
 
     #-------------------------------------------
-         
+
+    def get_mode(self):
+        if not self.osc: return
+
+        return self.osc._mode
+
+    #-------------------------------------------
+
+    def set_mode(self, mode):
+        if not self.osc: return
+
+        if mode >=0 and mode <= self.osc._max_mode:
+            self.osc._mode = mode
+
+    #-------------------------------------------
+
+    def get_mode_list(self):
+        if not self.osc: return
+
+        return self.osc._mode_lst
+
+    #-------------------------------------------
+
+
     def _proc_callback(self):
         """
         The User Callback function must be called by the threading loop

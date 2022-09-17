@@ -33,25 +33,6 @@ class InterfaceApp(object):
         self._notify(msg)
 
     #-------------------------------------------
-    
-    def note_on(self):
-        if self.synth:
-            self.synth.note_on()
-        
-        msg = "Note Off"
-        self._notify(msg)
-
-
-    #-------------------------------------------
-
-    def note_off(self):
-        if self.synth:
-            self.synth.note_off()
-        
-        msg = "Note On"
-        self._notify(msg)
-
-    #-------------------------------------------
 
     def _notify(self, msg):
         if self._parent:
@@ -63,6 +44,43 @@ class InterfaceApp(object):
         print("\a")
 
     #-------------------------------------------
+
+    def note_on(self):
+        if not self.synth: return
+        self.synth.note_on()
+        
+        msg = "Note Off"
+        self._notify(msg)
+
+    #-------------------------------------------
+
+    def note_off(self):
+        if not self.synth: return
+        self.synth.note_off()
+        
+        msg = "Note On"
+        self._notify(msg)
+
+    #-------------------------------------------
+
+    def set_mode(self, mode):
+        if not self.synth: return
+        self.synth.set_mode(mode)
+        
+        mode = self.synth.get_mode()
+        msg = f"Mode: {mode}"
+        self._notify(msg)
+
+    #-------------------------------------------
+
+    def get_mode_list(self):
+        if not self.synth: return
+
+        return self.synth.get_mode_list()
+        
+
+    #-------------------------------------------
+
 
 #========================================
 
