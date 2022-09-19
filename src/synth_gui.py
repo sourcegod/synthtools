@@ -29,6 +29,14 @@ class MainWindow(Gtk.Window):
         self.connect("destroy", self.on_destroy)
         self.connect("key-press-event", self.on_keypress)
         self.connect("key-release-event", self.on_keyrelease)
+        
+        self._octave = 60
+        self._key_notes = {
+                "KP_0": 0, "KP_1": 2, "KP_2": 4,
+                "KP_3": 5, "KP_4": 7, "KP_5": 9,
+                "KP_6": 11, "KP_7": 12, "KP_8": 14, 
+                "KP_9": 16,
+                }
 
         self.create_ui()
         # init Interface Synth
@@ -150,6 +158,7 @@ class MainWindow(Gtk.Window):
         Note: pygtk do not report error when klass or attribute is not found.
         """
 
+        index =0
         if self.iap is None: return
         keyname = Gdk.keyval_name(evt.keyval)
         if keyname == "Q":
@@ -157,9 +166,20 @@ class MainWindow(Gtk.Window):
         elif keyname == "h":
             beep()
             self.iap.note_on()
-        elif keyname == "KP_0":
-            self.iap.note_on()
-        
+        elif keyname in self._key_notes.keys():
+            octave = self.iap.get_key_base()
+            note = octave + self._key_notes[keyname]
+            self.iap.note_on(note, 127)
+        elif keyname == "KP_Subtract":
+            self.iap.change_key_base(step=-12, adding=1)
+        elif keyname == "KP_Add":
+            self.iap.change_key_base(step=12, adding=1)
+            """
+            octave = self._octave + 12
+            if octave >=0 and octave <= 84:
+                self._octave = octave
+            """
+
         is_ctrl = bool(evt.state & Gdk.ModifierType.CONTROL_MASK)
         is_shift = bool(evt.state & Gdk.ModifierType.SHIFT_MASK)
         is_alt = bool(evt.state & Gdk.ModifierType.MOD1_MASK)
@@ -187,11 +207,15 @@ class MainWindow(Gtk.Window):
     def on_keyrelease(self, widget, evt):
         if self.iap is None: return
         keyname = Gdk.keyval_name(evt.keyval)
-        if keyname == "h" or keyname == "KP_0":
+        if keyname == "h":
             self.iap.note_off()
             pass
+        elif keyname in self._key_notes.keys():
+            octave = self.iap.get_key_base()
+            note = octave + self._key_notes[keyname]
+            self.iap.note_off(note, 127)
+ 
         # beep()
-        pass
 
     #-------------------------------------------
 

@@ -5,7 +5,7 @@
     Date: Fri, 16/09/2022
     Author: Coolbrother
 """
-
+from math import pow
 import time
 import threading
 import numpy as np
@@ -17,10 +17,17 @@ def beep():
 
 #-------------------------------------------
 
+def mid2freq(note):
+    return 440.0 * pow(2, (note - 69) / 12.0)
+
+#-------------------------------------------
+
 class FastSynth(object):
     """ Fast synth to test oscillator """
-    def __init__(self):
-        self.pl = spl.Player()
+    def __init__(self, device_index=(None, None)):
+        # device_index = (6, 6)
+        # device_index = (0, 0)
+        self.pl = spl.Player(device_index=device_index)
         self.pl.start_stream()
         self.playing = False
         self._thr = None
@@ -136,13 +143,15 @@ class FastSynth(object):
     #-------------------------------------------
 
 
-    def note_on(self):
+    def note_on(self, note=60, vel=127):
+        freq = mid2freq(note)
+        self.osc.set_freq(freq)
         self.playing = True
         print("Playing Note...")
 
     #-------------------------------------------
 
-    def note_off(self):
+    def note_off(self, note=60, vel=127):
         self.playing = False
         print("Stopping Note...")
     #-------------------------------------------
