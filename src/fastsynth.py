@@ -11,6 +11,7 @@ import threading
 import numpy as np
 import oscillator as osc
 import streamplayer as spl
+import envelopegenerator as env
 
 def beep():
     print("\a")
@@ -21,6 +22,15 @@ def mid2freq(note):
     return 440.0 * pow(2, (note - 69) / 12.0)
 
 #-------------------------------------------
+
+class TMessage(object):
+    def __init__(self, note=0, vel=0):
+        self.note = note
+        self.vel = vel
+    
+#-------------------------------------------
+#========================================
+
 
 class FastSynth(object):
     """ Fast synth to test oscillator """
@@ -34,7 +44,9 @@ class FastSynth(object):
         self._running = False
         self.osc = osc.Oscillator()
         self._proc_cback = self._proc_callback
+        self.envgen = env.EnvelopeGenerator()
         self.init_osc()
+        self._last_note = TMessage()
 
     #-------------------------------------------
 
@@ -91,9 +103,10 @@ class FastSynth(object):
 
         # data shape must be correspond to the channel number
         data = np.zeros((512, 2), dtype='float32')
+        env_nextsample = self.envgen.next_sample
         if self.playing:
             for i in range(len(data)):
-                val = self.osc.next_sample()
+                val = self.osc.next_sample() * env_nextsample()
                 data[i] = val
        
         return data
@@ -144,22 +157,31 @@ class FastSynth(object):
 
 
     def note_on(self, note=60, vel=127):
-        freq = mid2freq(note)
-        self.osc.set_freq(freq)
+        if self._last_note.vel == 0:
+            self._last_note.note = note
+            self._last_note.vel = vel
+            freq = mid2freq(note)
+            self.osc.set_freq(freq)
+            self.envgen.enter_stage(self.envgen._stage_attack) # Attack stage
         self.playing = True
         print("Playing Note...")
 
     #-------------------------------------------
 
-    def note_off(self, note=60, vel=127):
-        self.playing = False
+    def note_off(self, note=60, vel=0):
+        self._last_note.note = note
+        self._last_note.vel = vel
+        self.envgen.enter_stage(self.envgen._stage_release) # Release stage
+        
+        # self.playing = False
         print("Stopping Note...")
     #-------------------------------------------
 
 #========================================
 
 def main():
-    synth = FastSynth()
+    device_index = (6, 6)
+    synth = FastSynth(device_index)
     synth.start_engine()
     while 1:
         val_str = input("-> ")

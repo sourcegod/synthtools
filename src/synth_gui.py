@@ -213,7 +213,7 @@ class MainWindow(Gtk.Window):
         elif keyname in self._key_notes.keys():
             octave = self.iap.get_key_base()
             note = octave + self._key_notes[keyname]
-            self.iap.note_off(note, 127)
+            self.iap.note_off(note, 0)
  
         # beep()
 

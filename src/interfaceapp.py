@@ -17,7 +17,7 @@ class InterfaceApp(object):
     #-------------------------------------------
     
     def init_app(self):
-        device_index = (0, 0)
+        device_index = (6, 6) # (0, 0)
         self.synth = fsyn.FastSynth(device_index=device_index)
         self.synth.set_params(mode=0, muted=False) # mode 4: White Noise
         self.synth.start_engine()

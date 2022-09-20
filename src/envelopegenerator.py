@@ -36,9 +36,9 @@ class EnvelopeGenerator(object):
         self._stage_lst = [0] * self._stage_count
         self._stage_lst[self._stage_off] = 0.0
         self._stage_lst[self._stage_attack] = 0.01
-        self._stage_lst[self._stage_decay] = 0.5
+        self._stage_lst[self._stage_decay] = 1
         self._stage_lst[self._stage_sustain] = 0.1
-        self._stage_lst[self._stage_release] = 1.0
+        self._stage_lst[self._stage_release] = 2
 
     #-------------------------------------------
 
@@ -110,7 +110,12 @@ class EnvelopeGenerator(object):
         Note: it's more naturel to calculate sound variation in exponential way instead linear.
         """
 
-        self._multiplier = 1.0 + (log_ln(end_level) - log_ln(start_level)) / (len_samples)
+        # TODO: manage Value Error with math domain when logln is zero
+        try:
+            self._multiplier = 1.0 + (log_ln(end_level) - log_ln(start_level)) / (len_samples)
+        except ValueError:
+            pass
+
 
     #-------------------------------------------
 
