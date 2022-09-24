@@ -90,6 +90,30 @@ class EnvelopeGenerator(object):
 
     #-------------------------------------------
 
+    def get_stage_value(self, index):
+        """
+        Returns the envelope stage value by index
+        """
+
+        try:
+            return self._stage_lst[index]
+        except IndexError:
+            return 0
+
+    #-------------------------------------------
+
+    def set_stage_value(self, index, val):
+        """
+        Sets the envelope stage value by index
+        """
+
+        try:
+            self._stage_lst[index] = val
+        except IndexError:
+            return
+
+    #-------------------------------------------
+
     def next_sample(self):
         ### whether curstage is not in stage OFF and not in SUSTAIN stage
         if (self._curstage != self._stage_off and\

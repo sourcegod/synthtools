@@ -7,7 +7,6 @@
 """
 from math import pow
 import time
-import threading
 import numpy as np
 import oscillator as osc
 import streamplayer as spl
@@ -38,12 +37,10 @@ class FastSynth(object):
         # device_index = (6, 6)
         # device_index = (0, 0)
         self.pl = spl.Player(device_index=device_index)
+        self.pl._audio_callback = self._audio_callback
         self.pl.start_stream()
         self.playing = False
-        self._thr = None
-        self._running = False
         self.osc = osc.Oscillator()
-        self._proc_cback = self._proc_callback
         self.envgen = env.EnvelopeGenerator()
         self.init_osc()
         self._last_note = TMessage()
@@ -96,7 +93,7 @@ class FastSynth(object):
     #-------------------------------------------
 
 
-    def _proc_callback(self):
+    def _audio_callback(self):
         """
         The User Callback function must be called by the threading loop
         """
@@ -113,48 +110,39 @@ class FastSynth(object):
 
     #-------------------------------------------
 
-    def _run_proc(self):
-        """
-        The Main Loop responsable to call the Callback User Function.
-        """
-
-        write_data = self.pl.write_data # for performance
-        lock = threading.Lock()
-        while 1:
-            if not self._running:
-                beep()
-                break
-            # for real threading function
-            lock.acquire()
-            data = self._proc_cback()
-            lock.release()
-            if data is None: break
-          
-            write_data(data)
-       
-    #-------------------------------------------
-
     def start_engine(self):
         """
         Running the main loop in thread
         """
 
-        if self._proc_cback is None: return
-        self._running = True
-        self._thr = threading.Thread(target=self._run_proc).start()
+        self.pl.start_thread()
         print("Starting Engine...""")
 
     #-------------------------------------------
 
     def stop_engine(self):
-        self._running = False
-        if self._thr:
-            self._thr.join()
-            self._thr = None
+        self.pl.stop_thread()
         print("Stopped Engine...""")
 
     #-------------------------------------------
 
+    def get_stage_value(self, index):
+        """
+        Returns the envelope stage value by index
+        """
+        
+        return  self.env.get_stage_value(index)
+
+    #-------------------------------------------
+
+    def set_stage_value(self, index, val):
+        """
+        Sets the envelope stage value by index
+        """
+        
+        self.env.set_stage_value(index, val)
+
+    #-------------------------------------------
 
     def note_on(self, note=60, vel=127):
         if self._last_note.vel == 0:
