@@ -93,20 +93,18 @@ class FastSynth(object):
     #-------------------------------------------
 
 
-    def _audio_callback(self):
+    def _audio_callback(self, indata, outdata, nb_frames):
         """
         The User Callback function must be called by the threading loop
         """
 
-        # data shape must be correspond to the channel number
-        data = np.zeros((512, 2), dtype='float32')
         env_nextsample = self.envgen.next_sample
         if self.playing:
-            for i in range(len(data)):
+            for i in range(nb_frames):
                 val = self.osc.next_sample() * env_nextsample()
-                data[i] = val
+                outdata[i] = val
        
-        return data
+        return outdata
 
     #-------------------------------------------
 

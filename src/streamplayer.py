@@ -5,6 +5,7 @@
     Date: Wed, 14/09/2022
     Author: Coolbrother
 """
+import numpy as np
 import threading
 import sounddevice as sd
 
@@ -85,11 +86,14 @@ class Player(object):
                 break
             # for real threading function
             lock.acquire()
-            data = self._audio_callback()
+            # data shape must be correspond to the channel number
+            outdata = np.zeros((512, 2), dtype='float32')
+            indata = outdata
+            self._audio_callback(indata, outdata, len(outdata))
             lock.release()
-            if data is None: break
+            if outdata is None: break
           
-            write_data(data)
+            write_data(outdata)
        
     #-------------------------------------------
 
