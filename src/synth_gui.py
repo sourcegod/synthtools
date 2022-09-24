@@ -29,13 +29,14 @@ class MainWindow(Gtk.Window):
         self.connect("destroy", self.on_destroy)
         self.connect("key-press-event", self.on_keypress)
         self.connect("key-release-event", self.on_keyrelease)
-        
-        self._octave = 60
+        # Note: using Shift key with Keypad keys to obtain KP_Insert, KP_Down ...
         self._key_notes = {
-                "KP_0": 0, "KP_1": 2, "KP_2": 4,
-                "KP_3": 5, "KP_4": 7, "KP_5": 9,
-                "KP_6": 11, "KP_7": 12, "KP_8": 14, 
-                "KP_9": 16,
+                "KP_0": 0, "KP_Insert": 1, "KP_1": 2, "KP_End": 3, 
+                "KP_2": 4, "KP_Down": 5,
+                "KP_3": 5, "KP_Next": 6, "KP_4": 7, "KP_Left": 8,
+                "KP_5": 9, "KP_Begin": 10, "KP_6": 11, "KP_Right": 12,
+                "KP_7": 12, "KP_Home": 13, "KP_8": 14, "KP_Up": 15,
+                "KP_9": 16, "KP_Page_Up": 17
                 }
 
         self.create_ui()
@@ -161,6 +162,9 @@ class MainWindow(Gtk.Window):
         index =0
         if self.iap is None: return
         keyname = Gdk.keyval_name(evt.keyval)
+        is_ctrl = bool(evt.state & Gdk.ModifierType.CONTROL_MASK)
+        is_shift = bool(evt.state & Gdk.ModifierType.SHIFT_MASK)
+        is_alt = bool(evt.state & Gdk.ModifierType.MOD1_MASK)
         if keyname == "Q":
             beep()
         elif keyname == "h":
@@ -174,16 +178,7 @@ class MainWindow(Gtk.Window):
             self.iap.change_key_base(step=-12, adding=1)
         elif keyname == "KP_Add":
             self.iap.change_key_base(step=12, adding=1)
-            """
-            octave = self._octave + 12
-            if octave >=0 and octave <= 84:
-                self._octave = octave
-            """
-
-        is_ctrl = bool(evt.state & Gdk.ModifierType.CONTROL_MASK)
-        is_shift = bool(evt.state & Gdk.ModifierType.SHIFT_MASK)
-        is_alt = bool(evt.state & Gdk.ModifierType.MOD1_MASK)
-        
+       
         if is_ctrl:
             beep()
         
@@ -195,7 +190,7 @@ class MainWindow(Gtk.Window):
         if is_alt:
             beep()
 
-        # self.buf.set_text(f"Key: {keyname}")
+        self.buf.set_text(f"Key: {keyname}")
         # self.buf.insert(0, f"{keyname}")
         # beep()
         # Gtk.Window.Beep()
