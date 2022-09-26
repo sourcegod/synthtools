@@ -69,7 +69,30 @@ class MainWindow(Gtk.Window):
 
         self._combo.connect("changed", self.on_change_combo)
         box.add(self._combo)
+        lb1 = Gtk.Label(label="Enveloppe Params")
+        box.add(lb1)
         
+        # Enveloppe combo
+        self._env_combo = Gtk.ComboBoxText()
+        env_lst = ["Attack", "Decay", "Sustain", "Release"]
+        for item in env_lst:
+            self._env_combo.append_text(item)
+        self._env_combo.set_active(0)
+        self._env_combo.connect("changed", self.on_change_envmode)
+        box.add(self._env_combo)
+ 
+        # Adjustments with
+                      # value, min, max, step_incr, pg_incr, pg_size
+        adj1 = Gtk.Adjustment(0.1, 0.01, 1.0, 0.01, 0.1, 0.0)
+        # adj2 = gtk.Adjustment(50, 0, 100, 1.0,  1.0,    0.0)
+
+        self._env_scale = Gtk.HScale(adjustment=adj1)
+        # sets the number of decimal to scale
+        self._env_scale.set_digits(2)
+        self._env_scale.connect("value-changed", self.on_change_envscale)
+
+        box.add(self._env_scale)
+
         """
         self.entry = Gtk.Entry()
         self.entry.set_text("-> ")
@@ -153,6 +176,29 @@ class MainWindow(Gtk.Window):
         """
 
     #-------------------------------------------
+
+    def on_change_envmode(self, widget):
+        # text = widget.get_active_text()
+        index = widget.get_active()
+        """
+        if self.iap:
+            self.iap.set_envmode(index)
+            """
+
+
+    #-------------------------------------------
+
+    def on_change_envscale(self, widget):
+        val = widget.get_value()
+        beep()
+        """
+        if self.iap:
+            self.iap.set_envmode(index)
+            """
+
+
+    #-------------------------------------------
+
 
     def on_keypress(self, widget, evt):
         """
