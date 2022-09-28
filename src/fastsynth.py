@@ -11,6 +11,7 @@ import numpy as np
 import oscillator as osc
 import streamplayer as spl
 import envelopegenerator as env
+import filter as fil
 
 def beep():
     print("\a")
@@ -42,6 +43,7 @@ class FastSynth(object):
         self.playing = False
         self.osc = osc.Oscillator()
         self.envgen = env.EnvelopeGenerator()
+        self.filter = fil.Filter()
         self.init_osc()
         self._last_note = TMessage()
 
@@ -78,6 +80,10 @@ class FastSynth(object):
     #-------------------------------------------
 
     def set_mode(self, mode):
+        """
+        sets oscillator mode 
+        """
+
         if not self.osc: return
 
         if mode >=0 and mode <= self.osc._max_mode:
@@ -101,7 +107,7 @@ class FastSynth(object):
         env_nextsample = self.envgen.next_sample
         if self.playing:
             for i in range(nb_frames):
-                val = self.osc.next_sample() * env_nextsample()
+                val = self.filter.process( self.osc.next_sample() * env_nextsample() )
                 outdata[i] = val
        
         return outdata
@@ -141,7 +147,38 @@ class FastSynth(object):
         self.envgen.set_stage_value(index, val)
 
     #-------------------------------------------
-    
+
+    def set_filter_mode(self, mode):
+        """
+        sets filter mode 
+        """
+
+        if not self.filter: return
+        self.filter.set_filter_mode(mode)
+
+    #-------------------------------------------
+
+    def set_filter_cutoff(self, val):
+        """
+        sets filter cutoff
+        """
+
+        if not self.filter: return
+        self.filter.new_cutoff(val)
+
+    #-------------------------------------------
+
+    def set_filter_resonance(self, val):
+        """
+        sets filter resonance
+        """
+
+        if not self.filter: return
+        self.filter.new_resonance(val)
+
+    #-------------------------------------------
+
+   
     def note_on(self, note=60, vel=127):
         if self._last_note.vel == 0:
             self._last_note.note = note
