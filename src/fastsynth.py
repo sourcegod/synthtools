@@ -129,7 +129,7 @@ class FastSynth(object):
         Returns the envelope stage value by index
         """
         
-        return  self.env.get_stage_value(index)
+        return  self.envgen.get_stage_value(index)
 
     #-------------------------------------------
 
@@ -138,10 +138,10 @@ class FastSynth(object):
         Sets the envelope stage value by index
         """
         
-        self.env.set_stage_value(index, val)
+        self.envgen.set_stage_value(index, val)
 
     #-------------------------------------------
-
+    
     def note_on(self, note=60, vel=127):
         if self._last_note.vel == 0:
             self._last_note.note = note

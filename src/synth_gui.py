@@ -78,7 +78,7 @@ class MainWindow(Gtk.Window):
         for item in env_lst:
             self._env_combo.append_text(item)
         self._env_combo.set_active(0)
-        self._env_combo.connect("changed", self.on_change_envmode)
+        self._env_combo.connect("changed", self.on_change_envparam)
         box.add(self._env_combo)
  
         # Adjustments with
@@ -177,24 +177,31 @@ class MainWindow(Gtk.Window):
 
     #-------------------------------------------
 
-    def on_change_envmode(self, widget):
+    def on_change_envparam(self, widget):
+        """
+        change envelope param combo
+        """
+
         # text = widget.get_active_text()
         index = widget.get_active()
         """
         if self.iap:
-            self.iap.set_envmode(index)
+            self.iap.set_envparam(index)
             """
 
 
     #-------------------------------------------
 
     def on_change_envscale(self, widget):
-        val = widget.get_value()
-        beep()
         """
+        change envelope param scale
+        """
+
+        val = widget.get_value()
+        index = self._env_combo.get_active()
+        # beep()
         if self.iap:
-            self.iap.set_envmode(index)
-            """
+            self.iap.set_env_param(index, val)
 
 
     #-------------------------------------------

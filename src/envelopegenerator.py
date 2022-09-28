@@ -37,7 +37,7 @@ class EnvelopeGenerator(object):
         self._stage_lst[self._stage_off] = 0.0
         self._stage_lst[self._stage_attack] = 0.01
         self._stage_lst[self._stage_decay] = 1
-        self._stage_lst[self._stage_sustain] = 0.1
+        self._stage_lst[self._stage_sustain] = 0.5
         self._stage_lst[self._stage_release] = 2
 
     #-------------------------------------------

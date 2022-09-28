@@ -66,6 +66,11 @@ class InterfaceApp(object):
     #-------------------------------------------
 
     def set_mode(self, mode):
+        """
+        sets synth mode:
+        Sine, Square, Sawtooth ...
+        """
+
         if not self.synth: return
         self.synth.set_mode(mode)
         
@@ -76,6 +81,11 @@ class InterfaceApp(object):
     #-------------------------------------------
 
     def get_mode_list(self):
+        """
+        returns synth mode: 
+        Sine, Square, Sawtooth ...
+        """
+
         if not self.synth: return
 
         return self.synth.get_mode_list()
@@ -106,6 +116,22 @@ class InterfaceApp(object):
         msg = f"Kye Base: {self._key_base}"
         self._notify(msg)
     
+    #-------------------------------------------
+
+    def set_env_param(self, index, value):
+        """
+        sets envelope param value:
+        """
+
+        if not self.synth: return
+        # adding 1 to index to avoid envelope stage off: 0
+        index +=1
+        self.synth.set_stage_value(index, value)
+        
+        val = self.synth.get_stage_value(index)
+        msg = f"Param, value: {index: param}"
+        self._notify(msg)
+
     #-------------------------------------------
 
 #========================================
