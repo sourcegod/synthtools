@@ -22,25 +22,6 @@ class Filter(object):
 
     #-------------------------------------------
 
-    def process(self, input_value):
-        """
-        ### By Paul Kellett
-        ### http://www.musicdsp.org/showone.php?id=29
-        """
-
-        self.buf0 += self.cutoff * (input_value - self.buf0)
-        self.buf1 += self.cutoff * (self.buf0 - self.buf1)
-        if self.curmode == self.mode_lowpass:
-            return self.buf1
-        elif self.curmode == self.mode_highpass:
-            return input_value - self.buf0
-        elif self.curmode == self.mode_bandpass:
-            return self.buf0 - self.buf1;
-        
-        return 0.0
-
-    #-------------------------------------------
-
     def new_cutoff(self, new_cutoff):
         """
         inline function 
@@ -61,12 +42,12 @@ class Filter(object):
 
     #-------------------------------------------
 
-    def set_filter_mode(self, new_mode):
+    def set_filter_mode(self, mode):
         """
         inline function 
         """
         
-        self.curmode = new_mode
+        self.curmode = mode
 
     #-------------------------------------------
 
@@ -76,6 +57,26 @@ class Filter(object):
         """
         
         self.feedback_amount = self.resonance + self.resonance / (1.0 - self.cutoff)
+
+    #-------------------------------------------
+
+    def process(self, input_value):
+        """
+        ### By Paul Kellett
+        ### http://www.musicdsp.org/showone.php?id=29
+        """
+
+        self.buf0 += self.cutoff * (input_value - self.buf0)
+        self.buf1 += self.cutoff * (self.buf0 - self.buf1)
+
+        if self.curmode == self.mode_lowpass:
+            return self.buf1
+        elif self.curmode == self.mode_highpass:
+            return input_value - self.buf0
+        elif self.curmode == self.mode_bandpass:
+            return self.buf0 - self.buf1;
+        
+        return 0.0
 
     #-------------------------------------------
 

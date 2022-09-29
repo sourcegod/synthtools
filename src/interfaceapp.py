@@ -134,6 +134,31 @@ class InterfaceApp(object):
 
     #-------------------------------------------
 
+    def change_param(self, index, val):
+        """
+        change param value by index
+        """
+
+        if not self.synth: return
+        if index == 0:    
+            self.synth.set_mode(val)
+        elif index in [1, 2, 3, 4]:
+            self.synth.set_stage_value(index, val)
+        elif index == 5:
+            self.synth.set_filter_mode(val)
+        elif index == 6:
+            self.synth.set_filter_cutoff(val)
+        elif index == 7:
+            # self.beep()
+            self.synth.set_filter_resonance(val)
+          
+        val = self.synth.get_stage_value(index)
+        msg = f"Index: {index}: value: {val}"
+        self._notify(msg)
+
+    #-------------------------------------------
+
+
 #========================================
 
 if __name__ == "__main__":

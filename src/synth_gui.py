@@ -74,7 +74,9 @@ class MainWindow(Gtk.Window):
         
         # Enveloppe combo
         self._env_combo = Gtk.ComboBoxText()
-        env_lst = ["Attack", "Decay", "Sustain", "Release"]
+        env_lst = ["Waveform", "Attack", "Decay", "Sustain", "Release",
+                "FilterMode", "Cutoff", "Resonance",
+                ]
         for item in env_lst:
             self._env_combo.append_text(item)
         self._env_combo.set_active(0)
@@ -83,10 +85,10 @@ class MainWindow(Gtk.Window):
  
         # Adjustments with
                       # value, min, max, step_incr, pg_incr, pg_size
-        adj1 = Gtk.Adjustment(0.1, 0.01, 1.0, 0.01, 0.1, 0.0)
+        self._adj1 = Gtk.Adjustment(0.1, 0.01, 1.0, 0.01, 0.1, 0.0)
         # adj2 = gtk.Adjustment(50, 0, 100, 1.0,  1.0,    0.0)
 
-        self._env_scale = Gtk.HScale(adjustment=adj1)
+        self._env_scale = Gtk.HScale(adjustment=self._adj1)
         # sets the number of decimal to scale
         self._env_scale.set_digits(2)
         self._env_scale.connect("value-changed", self.on_change_envscale)
@@ -184,6 +186,17 @@ class MainWindow(Gtk.Window):
 
         # text = widget.get_active_text()
         index = widget.get_active()
+        
+        if index == 0:
+            # Waveform mode
+            self._adj1.configure(0, 0, 5, 1, 1, 0.0)
+        elif index == 5:
+            # Filter mode
+            self._adj1.configure(0, 0, 3, 1, 1, 0.0)
+        else:
+            self._adj1.configure(0, 0, 5, 1, 1, 0.0)
+            self._adj1.configure(0.1, 0.01, 1.0, 0.01, 0.1, 0.0)
+
         """
         if self.iap:
             self.iap.set_envparam(index)
@@ -201,7 +214,8 @@ class MainWindow(Gtk.Window):
         index = self._env_combo.get_active()
         # beep()
         if self.iap:
-            self.iap.set_env_param(index, val)
+            # self.iap.set_env_param(index, val)
+            self.iap.change_param(index, val)
 
 
     #-------------------------------------------
