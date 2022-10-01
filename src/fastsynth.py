@@ -34,10 +34,10 @@ class TMessage(object):
 
 class FastSynth(object):
     """ Fast synth to test oscillator """
-    def __init__(self, device_index=(None, None)):
+    def __init__(self, device_index=(None, None), channels=2):
         # device_index = (6, 6)
         # device_index = (0, 0)
-        self.pl = spl.Player(device_index=device_index)
+        self.pl = spl.Player(device_index=device_index, channels=channels)
         self.pl._audio_callback = self._audio_callback
         self.pl.start_stream()
         self.playing = False

@@ -190,12 +190,20 @@ class MainWindow(Gtk.Window):
         if index == 0:
             # Waveform mode
             self._adj1.configure(0, 0, 5, 1, 1, 0.0)
+        elif index in [1, 2, 3, 4]:
+            # Enveloppe params
+            self._adj1.configure(0.1, 0.01, 1.0, 0.01, 0.1, 0.0)
         elif index == 5:
             # Filter mode
-            self._adj1.configure(0, 0, 3, 1, 1, 0.0)
-        else:
-            self._adj1.configure(0, 0, 5, 1, 1, 0.0)
-            self._adj1.configure(0.1, 0.01, 1.0, 0.01, 0.1, 0.0)
+            self._adj1.configure(0, 0, 2, 1, 1, 0.0)
+        elif index == 6:
+            # Filter Cutoff
+            # Value must be never at 1.0 to avoid ZeroDivision Error
+            self._adj1.configure(0.99, 0.01, 0.99, 0.001, 0.1, 0.0)
+        elif index == 7:
+            # Filter Resonance
+            self._adj1.configure(0.01, 0.01, 1.0, 0.001, 0.1, 0.0)
+
 
         """
         if self.iap:
