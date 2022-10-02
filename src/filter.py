@@ -66,7 +66,11 @@ class Filter(object):
         ### http://www.musicdsp.org/showone.php?id=29
         """
 
-        self.buf0 += self.cutoff * (input_value - self.buf0)
+        # only for the cutooff
+        # self.buf0 += self.cutoff * (input_value - self.buf0)
+        
+        # cutoff and resonance 
+        self.buf0 += self.cutoff * (input_value - self.buf0 + self.feedback_amount * (self.buf0 - self.buf1))
         self.buf1 += self.cutoff * (self.buf0 - self.buf1)
 
         if self.curmode == self.mode_lowpass:

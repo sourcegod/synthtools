@@ -180,6 +180,8 @@ class FastSynth(object):
 
    
     def note_on(self, note=60, vel=127):
+        if self._last_note.note != note:
+            print("Playing Note: ", note)
         if self._last_note.vel == 0:
             self._last_note.note = note
             self._last_note.vel = vel
@@ -187,17 +189,19 @@ class FastSynth(object):
             self.osc.set_freq(freq)
             self.envgen.enter_stage(self.envgen._stage_attack) # Attack stage
         self.playing = True
-        print("Playing Note...")
+        # print("Playing Note...")
 
     #-------------------------------------------
 
     def note_off(self, note=60, vel=0):
+        if self._last_note.note != note:
+            print("Stopping Note: ", note)
         self._last_note.note = note
         self._last_note.vel = vel
         self.envgen.enter_stage(self.envgen._stage_release) # Release stage
         
         # self.playing = False
-        print("Stopping Note...")
+        # print("Stopping Note...")
     #-------------------------------------------
 
 #========================================
