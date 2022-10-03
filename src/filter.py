@@ -17,6 +17,8 @@ class Filter(object):
         self.curmode = self.mode_lowpass
         self.buf0 = 0.0
         self.buf1 = 0.0
+        self.buf2 = 0.0
+        self.buf3 = 0.0
         self.feedback_amount =0.0
         self.calculate_feedback()
 
@@ -69,16 +71,26 @@ class Filter(object):
         # only for the cutooff
         # self.buf0 += self.cutoff * (input_value - self.buf0)
         
+        # for test
+        # self.buf0 += self.cutoff * (input_value)
+        
         # cutoff and resonance 
         self.buf0 += self.cutoff * (input_value - self.buf0 + self.feedback_amount * (self.buf0 - self.buf1))
         self.buf1 += self.cutoff * (self.buf0 - self.buf1)
 
+        # From -12dB to -24dB
+        # getting an attenuation of -24dB per octave. Add the following two lines
+        self.buf2 += self.cutoff * (self.buf1 - self.buf2)
+        self.buf3 += self.cutoff * (self.buf2 - self.buf3)
+
         if self.curmode == self.mode_lowpass:
-            return self.buf1
+            # return self.buf0
+            # return self.buf1
+            return self.buf3
         elif self.curmode == self.mode_highpass:
-            return input_value - self.buf0
+            return input_value - self.buf3
         elif self.curmode == self.mode_bandpass:
-            return self.buf0 - self.buf1;
+            return self.buf0 - self.buf3
         
         return 0.0
 
