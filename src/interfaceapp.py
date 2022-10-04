@@ -135,13 +135,13 @@ class InterfaceApp(object):
 
     #-------------------------------------------
 
-    def change_param(self, index, val):
+    def change_param(self, param_index, index, val):
         """
         change param value by index
         """
 
         if not self.synth: return
-        self.synth.change_param(index, val)
+        self.synth.change_param(param_index, index, val)
 
         """
         if index == 0:    

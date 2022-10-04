@@ -79,9 +79,8 @@ class MainWindow(Gtk.Window):
         
         # Enveloppe combo
         self._env_combo = Gtk.ComboBoxText()
-        env_lst = ["Waveform", "Attack", "Decay", "Sustain", "Release",
-                "FilterMode", "Cutoff", "Resonance",
-                ]
+        env_lst = ["Attack", "Decay", "Sustain", "Release", ]
+                # "FilterMode", "Cutoff", "Resonance",
         for item in env_lst:
             self._env_combo.append_text(item)
         self._env_combo.set_active(0)
@@ -90,12 +89,11 @@ class MainWindow(Gtk.Window):
  
         # Adjustments with
                       # value, min, max, step_incr, pg_incr, pg_size
-        self._adj1 = Gtk.Adjustment(0.1, 0.01, 1.0, 0.01, 0.1, 0.0)
-        # adj2 = gtk.Adjustment(50, 0, 100, 1.0,  1.0,    0.0)
+        self._adj1 = Gtk.Adjustment(0.1, 0.01, 5.0, 0.01, 0.1, 0.0)
 
         self._env_scale = Gtk.HScale(adjustment=self._adj1)
         # sets the number of decimal to scale
-        self._adj1.configure(0, 0, 5, 1, 1, 0.0)
+        # self._adj1.configure(0, 0, 5, 1, 1, 0.0)
         self._env_scale.set_digits(2)
         self._env_scale.connect("value-changed", self.on_change_envscale)
 
@@ -175,24 +173,24 @@ class MainWindow(Gtk.Window):
         change volume scale
         """
 
+        param_index =0
         index =0
         val = widget.get_value()
         if self.iap:
-            self.iap.change_param(index, val)
+            self.iap.change_param(param_index, index, val)
 
 
     #-------------------------------------------
 
-
-
     def on_change_combo(self, widget):
         # text = widget.get_active_text()
-        index =1
+        param_index =1
+        index =0
         val = widget.get_active()
         # self.buf.set_text(f"Combo Index: {index}")
         if self.iap:
             # self.iap.set_mode(index)
-            self.iap.change_param(index, val)
+            self.iap.change_param(param_index, index, val)
 
         """
         # print("Hello World")
@@ -208,8 +206,12 @@ class MainWindow(Gtk.Window):
         """
 
         # text = widget.get_active_text()
-        index = widget.get_active()
+        param_index =2
+        index =0
+        val = widget.get_active()
         
+        
+        """
         if index == 0:
             # Waveform mode
             self._adj1.configure(0, 0, 5, 1, 1, 0.0)
@@ -229,13 +231,11 @@ class MainWindow(Gtk.Window):
             # Filter Resonance
             self._adj1.configure(0.01, 0.01, 1.0, 0.01, 0.1, 0.0)
             self._env_scale.set_digits(2)
-
-
         """
-        if self.iap:
-            self.iap.set_envparam(index)
-            """
 
+        if self.iap:
+            # self.iap.change_param(param_index, index, val)
+            pass
 
     #-------------------------------------------
 
@@ -244,12 +244,12 @@ class MainWindow(Gtk.Window):
         change envelope param scale
         """
 
-        val = widget.get_value()
+        param_index =3
         index = self._env_combo.get_active()
+        val = widget.get_value()
         # beep()
         if self.iap:
-            # self.iap.set_env_param(index, val)
-            self.iap.change_param(index, val)
+            self.iap.change_param(param_index, index, val)
 
 
     #-------------------------------------------

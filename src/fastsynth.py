@@ -49,7 +49,8 @@ class FastSynth(object):
         self._last_note = TMessage()
         self._param_lst = [
                 "volume", "waveform",
-                "attack", "decay", "sustain", "release",
+                # "attack", "decay", "sustain", "release",
+                "envmode", "envparam", "cutoff", "resonance",
                 ]
 
     #-------------------------------------------
@@ -189,15 +190,21 @@ class FastSynth(object):
 
     #-------------------------------------------
    
-    def change_param(self, index, val):
+    def change_param(self, param_index, index, val):
         """
         change synth param by index
         """
-        item = self._param_lst[index]
+        item = self._param_lst[param_index]
         if item == "volume":
             self.set_volume(val)
         elif item == "waveform":
             self.set_oscmode(val)
+        elif item in ["attack", "decay", "sustain", "release"]:
+            self.set_stage_value(index, val)
+        elif item == "envmode":
+            self.set_oscmode(val)
+        elif item == "envparam":
+            self.set_stage_value(index+1, val)
 
     #-------------------------------------------
 
