@@ -17,8 +17,8 @@ class Oscillator(object):
         self._mode =0 # oscillator mode
         self._mode_lst = [
                 "Sine", "Square", "SawTooth",
-                "Triangle", "White Noise", "Pink Noise",
-                "Silence",
+                "Triangle", "Silence", "White Noise", 
+                "Pink Noise",
             ]
         self._max_mode = len(self._mode_lst)
         self._PI = math.pi
@@ -92,17 +92,17 @@ class Oscillator(object):
             value = -1.0 + (2.0 * self._phase / twoPI)
             value = 2.0 * (abs(value) - 0.5)
         
-        elif mode == 4: # White Noise with uniform random 
+        elif mode == 4: # Silence
+            return value
+        
+        elif mode == 5: # White Noise with uniform random 
             value = random() # randuni(-1, 1)
             return value
 
-        elif mode == 5: # Pink Noise with uniform random 
+        elif mode == 6: # Pink Noise with uniform random 
             value = randuni(-1, 1)
             return value
-
-        elif mode == 6: # Silence
-            return value
-           
+          
         self._phase += self._phase_inc
         
         if self._phase >= twoPI:

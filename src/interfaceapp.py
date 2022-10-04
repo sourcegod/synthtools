@@ -141,6 +141,9 @@ class InterfaceApp(object):
         """
 
         if not self.synth: return
+        self.synth.change_param(index, val)
+
+        """
         if index == 0:    
             self.synth.set_mode(val)
         elif index in [1, 2, 3, 4]:
@@ -152,8 +155,10 @@ class InterfaceApp(object):
         elif index == 7:
             # self.beep()
             self.synth.set_filter_resonance(val)
+        """
+
           
-        val = self.synth.get_stage_value(index)
+        # val = self.synth.get_stage_value(index)
         msg = f"Index: {index}: value: {val}"
         self._notify(msg)
 

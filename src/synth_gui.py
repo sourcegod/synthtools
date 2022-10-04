@@ -55,18 +55,23 @@ class MainWindow(Gtk.Window):
         # handler when any key is pressed
         box = Gtk.VBox(spacing=6)
         self.add(box)
+        # volume adjust
+        # default value, min, max, step, page_step, page_size
+        lb1 = Gtk.Label(label="Volume Params")
+        box.add(lb1)
+        adj0 = Gtk.Adjustment(1.0, 0, 1.0, 0.01, 0.1, 0.0)
+        self._vol_scale = Gtk.HScale(adjustment=adj0)
+        # sets the number of decimal to scale
+        self._vol_scale.set_digits(2)
+        self._vol_scale.connect("value-changed", self.on_change_volume)
+        box.add(self._vol_scale)
+
 
         # Simple Combobox
         # lst = ["coucou", "man", "yes"]
         self._combo = Gtk.ComboBoxText()
         
         # filling the combo later
-        """
-        for item in mode_lst:
-            self._combo.append_text(item)
-        self._combo.set_active(0)
-        """
-
         self._combo.connect("changed", self.on_change_combo)
         box.add(self._combo)
         lb1 = Gtk.Label(label="Enveloppe Params")
@@ -165,12 +170,29 @@ class MainWindow(Gtk.Window):
 
     #-------------------------------------------
 
+    def on_change_volume(self, widget):
+        """
+        change volume scale
+        """
+
+        index =0
+        val = widget.get_value()
+        if self.iap:
+            self.iap.change_param(index, val)
+
+
+    #-------------------------------------------
+
+
+
     def on_change_combo(self, widget):
         # text = widget.get_active_text()
-        index = widget.get_active()
-        self.buf.set_text(f"Combo Index: {index}")
+        index =1
+        val = widget.get_active()
+        # self.buf.set_text(f"Combo Index: {index}")
         if self.iap:
-            self.iap.set_mode(index)
+            # self.iap.set_mode(index)
+            self.iap.change_param(index, val)
 
         """
         # print("Hello World")

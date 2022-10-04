@@ -41,11 +41,16 @@ class FastSynth(object):
         self.pl._audio_callback = self._audio_callback
         self.pl.start_stream()
         self.playing = False
+        self.volume = 1.0
         self.osc = osc.Oscillator()
         self.envgen = env.EnvelopeGenerator()
         self.filter = fil.Filter()
         self.init_osc()
         self._last_note = TMessage()
+        self._param_lst = [
+                "volume", "waveform",
+                "attack", "decay", "sustain", "release",
+                ]
 
     #-------------------------------------------
 
@@ -57,6 +62,12 @@ class FastSynth(object):
         if self.osc:
             self.osc.set_muted(False)
             self.osc.set_mode(0) # Sine Osc 
+
+    #-------------------------------------------
+
+    def set_volume(self, volume):
+        if volume >=0.0 and volume <= 1.0:
+            self.volume = volume
 
     #-------------------------------------------
 
@@ -72,14 +83,14 @@ class FastSynth(object):
 
     #-------------------------------------------
 
-    def get_mode(self):
+    def get_oscmode(self):
         if not self.osc: return
 
         return self.osc._mode
 
     #-------------------------------------------
 
-    def set_mode(self, mode):
+    def set_oscmode(self, mode):
         """
         sets oscillator mode 
         """
@@ -107,7 +118,7 @@ class FastSynth(object):
         env_nextsample = self.envgen.next_sample
         if self.playing:
             for i in range(nb_frames):
-                val = self.filter.process( self.osc.next_sample() * env_nextsample() )
+                val = self.filter.process( self.osc.next_sample() * env_nextsample() * self.volume)
                 outdata[i] = val
        
         return outdata
@@ -177,8 +188,19 @@ class FastSynth(object):
         self.filter.new_resonance(val)
 
     #-------------------------------------------
-
    
+    def change_param(self, index, val):
+        """
+        change synth param by index
+        """
+        item = self._param_lst[index]
+        if item == "volume":
+            self.set_volume(val)
+        elif item == "waveform":
+            self.set_oscmode(val)
+
+    #-------------------------------------------
+
     def note_on(self, note=60, vel=127):
         if self._last_note.note != note:
             print("Playing Note: ", note)
