@@ -50,7 +50,8 @@ class FastSynth(object):
         self._param_lst = [
                 "volume", "waveform",
                 # "attack", "decay", "sustain", "release",
-                "envmode", "envparam", "cutoff", "resonance",
+                "envmode", "envparam", 
+                "filtermode", "cutoff", "resonance",
                 ]
 
     #-------------------------------------------
@@ -199,12 +200,17 @@ class FastSynth(object):
             self.set_volume(val)
         elif item == "waveform":
             self.set_oscmode(val)
-        elif item in ["attack", "decay", "sustain", "release"]:
-            self.set_stage_value(index, val)
         elif item == "envmode":
             self.set_oscmode(val)
         elif item == "envparam":
             self.set_stage_value(index+1, val)
+        elif item == "filtermode":
+            self.set_filter_mode(val)
+        elif item == "cutoff":
+            self.set_filter_cutoff(val)
+        elif item == "resonance":
+            self.set_filter_resonance(val)
+
 
     #-------------------------------------------
 

@@ -74,10 +74,11 @@ class MainWindow(Gtk.Window):
         # filling the combo later
         self._combo.connect("changed", self.on_change_combo)
         box.add(self._combo)
+
+        # Enveloppe widgets
         lb1 = Gtk.Label(label="Enveloppe Params")
         box.add(lb1)
         
-        # Enveloppe combo
         self._env_combo = Gtk.ComboBoxText()
         env_lst = ["Attack", "Decay", "Sustain", "Release", ]
                 # "FilterMode", "Cutoff", "Resonance",
@@ -98,6 +99,39 @@ class MainWindow(Gtk.Window):
         self._env_scale.connect("value-changed", self.on_change_envscale)
 
         box.add(self._env_scale)
+        
+        # Filter Mode widgets
+        lb1 = Gtk.Label(label="Filter Mode")
+        box.add(lb1)
+        self._fil_mode = Gtk.ComboBoxText()
+        fil_lst = ["Low Pass", "Band Pass", "High Pass", ]
+        for item in fil_lst:
+            self._fil_mode.append_text(item)
+        self._fil_mode.set_active(0)
+        self._fil_mode.connect("changed", self.on_change_filmode)
+        box.add(self._fil_mode)
+         
+         # Cutoff widget
+        lb1 = Gtk.Label(label="Filter Cutoff")
+        box.add(lb1)
+        adj1 = Gtk.Adjustment(0.99, 0.01, 0.99, 0.01, 0.1, 0.0)
+
+        self._fil_cutoff = Gtk.HScale(adjustment=adj1)
+        self._fil_cutoff.set_digits(2)
+        self._fil_cutoff.connect("value-changed", self.on_change_filcutoff)
+
+        box.add(self._fil_cutoff)
+
+        # Resonance widget
+        lb1 = Gtk.Label(label="Filter Resonance")
+        box.add(lb1)
+        adj1 = Gtk.Adjustment(0.01, 0.01, 0.99, 0.01, 0.1, 0.0)
+        self._fil_resonance = Gtk.HScale(adjustment=adj1)
+        self._fil_resonance.set_digits(2)
+        self._fil_resonance.connect("value-changed", self.on_change_filresonance)
+
+        box.add(self._fil_resonance)
+
 
         """
         self.entry = Gtk.Entry()
@@ -251,6 +285,45 @@ class MainWindow(Gtk.Window):
         if self.iap:
             self.iap.change_param(param_index, index, val)
 
+
+    #-------------------------------------------
+
+    def on_change_filmode(self, widget):
+        """
+        change filter mode
+        """
+
+        param_index =4
+        index =0
+        val = widget.get_active()
+        if self.iap:
+            self.iap.change_param(param_index, index, val)
+
+    #-------------------------------------------
+
+    def on_change_filcutoff(self, widget):
+        """
+        change filter cutoff
+        """
+
+        param_index =5
+        index =0
+        val = widget.get_value()
+        if self.iap:
+            self.iap.change_param(param_index, index, val)
+
+    #-------------------------------------------
+
+    def on_change_filresonance(self, widget):
+        """
+        change filter resonance
+        """
+
+        param_index =6
+        index =0
+        val = widget.get_value()
+        if self.iap:
+            self.iap.change_param(param_index, index, val)
 
     #-------------------------------------------
 
