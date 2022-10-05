@@ -52,6 +52,7 @@ class FastSynth(object):
                 # "attack", "decay", "sustain", "release",
                 "envmode", "envparam", 
                 "filtermode", "cutoff", "resonance",
+                "envfilmode", "envfilparam",
                 ]
 
     #-------------------------------------------
@@ -195,7 +196,11 @@ class FastSynth(object):
         """
         change synth param by index
         """
-        item = self._param_lst[param_index]
+        try:
+            item = self._param_lst[param_index]
+        except IndexError:
+            print(f"Index Error: no param index: {param_index}")
+            return
         if item == "volume":
             self.set_volume(val)
         elif item == "waveform":
@@ -210,6 +215,10 @@ class FastSynth(object):
             self.set_filter_cutoff(val)
         elif item == "resonance":
             self.set_filter_resonance(val)
+        elif item == "envfilmode":
+            pass
+        elif item == "envfilparam":
+            pass
 
 
     #-------------------------------------------

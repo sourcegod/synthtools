@@ -132,7 +132,25 @@ class MainWindow(Gtk.Window):
 
         box.add(self._fil_resonance)
 
+        # Envelope Filter widgets
+        lb1 = Gtk.Label(label="Envelope Filter")
+        box.add(lb1)
+        self._envfil_mode = Gtk.ComboBoxText()
+        envfil_lst = ["Attack Filter", "Decay Filter", "Sustain Filter", "Release Filter", ]
+        for item in envfil_lst:
+            self._envfil_mode.append_text(item)
+        self._envfil_mode.set_active(0)
+        self._envfil_mode.connect("changed", self.on_change_envfilmode)
+        box.add(self._envfil_mode)
+        # Adjustments with
+        adj1 = Gtk.Adjustment(0.1, 0.01, 5.0, 0.01, 0.1, 0.0)
 
+        self._envfil_param = Gtk.HScale(adjustment=adj1)
+        # sets the number of decimal to scale
+        self._envfil_param.set_digits(2)
+        self._envfil_param.connect("value-changed", self.on_change_envfilparam)
+        box.add(self._envfil_param)
+ 
         """
         self.entry = Gtk.Entry()
         self.entry.set_text("-> ")
@@ -321,6 +339,32 @@ class MainWindow(Gtk.Window):
 
         param_index =6
         index =0
+        val = widget.get_value()
+        if self.iap:
+            self.iap.change_param(param_index, index, val)
+
+    #-------------------------------------------
+
+    def on_change_envfilmode(self, widget):
+        """
+        change envelope filter mode
+        """
+
+        param_index =7
+        index =0
+        val = widget.get_active()
+        if self.iap:
+            self.iap.change_param(param_index, index, val)
+
+    #-------------------------------------------
+
+    def on_change_envfilparam(self, widget):
+        """
+        change envelope filter param scale
+        """
+
+        param_index =8
+        index = self._envfil_mode.get_active()
         val = widget.get_value()
         if self.iap:
             self.iap.change_param(param_index, index, val)
