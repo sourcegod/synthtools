@@ -44,6 +44,9 @@ class FastSynth(object):
         self.volume = 1.0
         self.osc = osc.Oscillator()
         self.envgen = env.EnvelopeGenerator()
+        # Filter Envelope
+        self.filenv = env.EnvelopeGenerator()
+        self.filenv_amount = 0.0
         self.filter = fil.Filter()
         self.init_osc()
         self._last_note = TMessage()
@@ -52,7 +55,7 @@ class FastSynth(object):
                 # "attack", "decay", "sustain", "release",
                 "envmode", "envparam", 
                 "filtermode", "cutoff", "resonance",
-                "envfilmode", "envfilparam",
+                "filenvmode", "filenvparam", "filenvamount",
                 ]
 
     #-------------------------------------------
@@ -118,12 +121,24 @@ class FastSynth(object):
         The User Callback function must be called by the threading loop
         """
 
+        # for performance without lookup rattribute
         env_nextsample = self.envgen.next_sample
+        fil_process = self.filter.process
+        osc_nextsample = self.osc.next_sample
+        volume = self.volume
+        fil_set_cutoffmode = self.filter.set_cutoffmode
+        filenv_nextsample = self.filenv.next_sample
+        filenv_amount = self.filenv_amount = -1.0
         if self.playing:
             for i in range(nb_frames):
-                val = self.filter.process( self.osc.next_sample() * env_nextsample() * self.volume)
+                val = fil_process( 
+                    osc_nextsample() * env_nextsample() * volume
+                        )
                 outdata[i] = val
-       
+                fil_set_cutoffmode(
+                    filenv_nextsample() * filenv_amount
+                        ) 
+
         return outdata
 
     #-------------------------------------------
@@ -196,6 +211,7 @@ class FastSynth(object):
         """
         change synth param by index
         """
+        print(f"param_index: {param_index}, index: {index}, val: {val}")
         try:
             item = self._param_lst[param_index]
         except IndexError:
@@ -206,8 +222,9 @@ class FastSynth(object):
         elif item == "waveform":
             self.set_oscmode(val)
         elif item == "envmode":
-            self.set_oscmode(val)
+            pass
         elif item == "envparam":
+            # change value stage for envelope 1
             self.set_stage_value(index+1, val)
         elif item == "filtermode":
             self.set_filter_mode(val)
@@ -215,11 +232,14 @@ class FastSynth(object):
             self.set_filter_cutoff(val)
         elif item == "resonance":
             self.set_filter_resonance(val)
-        elif item == "envfilmode":
+        elif item == "filenvmode":
+            # self.filter.set_cutoffmode(val)
             pass
-        elif item == "envfilparam":
-            pass
-
+        elif item == "filenvparam":
+            # change value stage for filter envelope  2
+            self.filenv.set_stage_value(index+1, val)
+        elif item == "filenvamount":
+            self.filenv_amount = val
 
     #-------------------------------------------
 
@@ -232,6 +252,7 @@ class FastSynth(object):
             freq = mid2freq(note)
             self.osc.set_freq(freq)
             self.envgen.enter_stage(self.envgen._stage_attack) # Attack stage
+            self.filenv.enter_stage(self.envgen._stage_attack) # Attack stage
         self.playing = True
         # print("Playing Note...")
 
@@ -243,6 +264,7 @@ class FastSynth(object):
         self._last_note.note = note
         self._last_note.vel = vel
         self.envgen.enter_stage(self.envgen._stage_release) # Release stage
+        self.filenv.enter_stage(self.envgen._stage_release)
         
         # self.playing = False
         # print("Stopping Note...")
