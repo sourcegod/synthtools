@@ -131,14 +131,14 @@ class FastSynth(object):
         filenv_amount = self.filenv_amount = -1.0
         if self.playing:
             for i in range(nb_frames):
+                fil_set_cutoffmode(
+                    filenv_nextsample() * filenv_amount
+                        ) 
                 val = fil_process( 
                     osc_nextsample() * env_nextsample() * volume
                         )
                 outdata[i] = val
-                fil_set_cutoffmode(
-                    filenv_nextsample() * filenv_amount
-                        ) 
-
+        
         return outdata
 
     #-------------------------------------------
