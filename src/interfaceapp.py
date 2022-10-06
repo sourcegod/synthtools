@@ -119,22 +119,6 @@ class InterfaceApp(object):
     
     #-------------------------------------------
 
-    def set_env_param(self, index, value):
-        """
-        sets envelope param value:
-        """
-
-        if not self.synth: return
-        # adding 1 to index to avoid envelope stage off: 0
-        index +=1
-        self.synth.set_stage_value(index, value)
-        
-        val = self.synth.get_stage_value(index)
-        msg = f"Param, value: {index: param}"
-        self._notify(msg)
-
-    #-------------------------------------------
-
     def change_param(self, param_index, index, val):
         """
         change param value by index
@@ -143,22 +127,6 @@ class InterfaceApp(object):
         if not self.synth: return
         self.synth.change_param(param_index, index, val)
 
-        """
-        if index == 0:    
-            self.synth.set_mode(val)
-        elif index in [1, 2, 3, 4]:
-            self.synth.set_stage_value(index, val)
-        elif index == 5:
-            self.synth.set_filter_mode(val)
-        elif index == 6:
-            self.synth.set_filter_cutoff(val)
-        elif index == 7:
-            # self.beep()
-            self.synth.set_filter_resonance(val)
-        """
-
-          
-        # val = self.synth.get_stage_value(index)
         msg = f"Index: {index}: value: {val}"
         self._notify(msg)
 
