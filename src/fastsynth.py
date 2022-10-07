@@ -127,6 +127,7 @@ class FastSynth(object):
 
     def _audio_callback(self, indata, outdata, nb_frames):
         """
+        Note: this function is equivalent of ProcessDoubleReplacing function in the Martin Finke Audio Plugins Tutorial.
         The User Callback function must be called by the threading loop
         """
 
