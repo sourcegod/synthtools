@@ -31,6 +31,22 @@ class TMessage(object):
 #-------------------------------------------
 #========================================
 
+class TParam(object):
+    """ param values """
+    volume =0
+    waveform =1
+    env_mode =2
+    env_param =3
+    filter_mode =4
+    cutoff =5
+    resonance =6
+    filter_envmode =7
+    filter_envparam =8
+    filter_envamount =9
+
+#-------------------------------------------
+#========================================
+
 
 class FastSynth(object):
     """ Fast synth to test oscillator """
@@ -50,13 +66,6 @@ class FastSynth(object):
         self.filter = fil.Filter()
         self.init_osc()
         self._last_note = TMessage()
-        self._param_lst = [
-                "volume", "waveform",
-                # "attack", "decay", "sustain", "release",
-                "envmode", "envparam", 
-                "filtermode", "cutoff", "resonance",
-                "filenvmode", "filenvparam", "filenvamount",
-                ]
 
     #-------------------------------------------
 
@@ -211,34 +220,29 @@ class FastSynth(object):
         """
         change synth param by index
         """
-        print(f"param_index: {param_index}, index: {index}, val: {val}")
-        try:
-            item = self._param_lst[param_index]
-        except IndexError:
-            print(f"Index Error: no param index: {param_index}")
-            return
-        if item == "volume":
+        
+        # print(f"param_index: {param_index}, index: {index}, val: {val}")
+        if param_index == TParam.volume:
             self.set_volume(val)
-        elif item == "waveform":
+        elif param_index == TParam.waveform:
             self.set_oscmode(val)
-        elif item == "envmode":
-            pass
-        elif item == "envparam":
+        elif param_index == TParam.env_mode:
+            pass # no action
+        elif param_index == TParam.env_param:
             # change value stage for envelope 1
             self.set_stage_value(index+1, val)
-        elif item == "filtermode":
+        elif param_index == TParam.filter_mode:
             self.set_filter_mode(val)
-        elif item == "cutoff":
+        elif param_index == TParam.cutoff:
             self.set_filter_cutoff(val)
-        elif item == "resonance":
+        elif param_index == TParam.resonance:
             self.set_filter_resonance(val)
-        elif item == "filenvmode":
-            # self.filter.set_cutoffmode(val)
-            pass
-        elif item == "filenvparam":
+        elif param_index == TParam.filter_envmode:
+            pass # No action
+        elif param_index == TParam.filter_envparam:
             # change value stage for filter envelope  2
             self.filenv.set_stage_value(index+1, val)
-        elif item == "filenvamount":
+        elif param_index == TParam.filter_envamount:
             self.filenv_amount = val
 
     #-------------------------------------------

@@ -11,8 +11,19 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk
 import time
-import threading
 import interfaceapp as _iap
+
+# IDS
+ID_VOLUME =0
+ID_WAVEFORM =1
+ID_ENVMODE =2
+ID_ENVPARAM =3
+ID_FILTERMODE =4
+ID_CUTOFF =5
+ID_RESONANCE =6
+ID_FILTERENVMODE =7
+ID_FILTERENVPARAM =8
+ID_FILTERENVAMOUNT =9
 
 def beep():
     print("\a")
@@ -63,7 +74,7 @@ class MainWindow(Gtk.Window):
         self._vol_scale = Gtk.HScale(adjustment=adj0)
         # sets the number of decimal to scale
         self._vol_scale.set_digits(2)
-        self._vol_scale.connect("value-changed", self.on_change_param, 0)
+        self._vol_scale.connect("value-changed", self.on_param_change, ID_VOLUME)
         box.add(self._vol_scale)
 
 
@@ -71,7 +82,7 @@ class MainWindow(Gtk.Window):
         # lst = ["coucou", "man", "yes"]
         self._combo = Gtk.ComboBoxText()
         # filling the combo later
-        self._combo.connect("changed", self.on_change_param, 1)
+        self._combo.connect("changed", self.on_param_change, ID_WAVEFORM)
         box.add(self._combo)
 
         # Enveloppe widgets
@@ -83,7 +94,7 @@ class MainWindow(Gtk.Window):
         for item in env_lst:
             self._env_combo.append_text(item)
         self._env_combo.set_active(0)
-        self._env_combo.connect("changed", self.on_change_param, 2)
+        self._env_combo.connect("changed", self.on_param_change, ID_ENVMODE)
         box.add(self._env_combo)
  
         # Adjustments with
@@ -94,7 +105,7 @@ class MainWindow(Gtk.Window):
         # sets the number of decimal to scale
         # self._adj1.configure(0, 0, 5, 1, 1, 0.0)
         self._env_scale.set_digits(2)
-        self._env_scale.connect("value-changed", self.on_change_param, 3)
+        self._env_scale.connect("value-changed", self.on_param_change, ID_ENVPARAM)
 
         box.add(self._env_scale)
         
@@ -106,7 +117,7 @@ class MainWindow(Gtk.Window):
         for item in fil_lst:
             self._fil_mode.append_text(item)
         self._fil_mode.set_active(0)
-        self._fil_mode.connect("changed", self.on_change_param, 4)
+        self._fil_mode.connect("changed", self.on_param_change, ID_FILTERMODE)
         box.add(self._fil_mode)
          
          # Cutoff widget
@@ -116,7 +127,7 @@ class MainWindow(Gtk.Window):
 
         self._fil_cutoff = Gtk.HScale(adjustment=adj1)
         self._fil_cutoff.set_digits(2)
-        self._fil_cutoff.connect("value-changed", self.on_change_param, 5)
+        self._fil_cutoff.connect("value-changed", self.on_param_change, ID_CUTOFF)
 
         box.add(self._fil_cutoff)
 
@@ -126,7 +137,7 @@ class MainWindow(Gtk.Window):
         adj1 = Gtk.Adjustment(0.01, 0.01, 0.99, 0.01, 0.1, 0.0)
         self._fil_resonance = Gtk.HScale(adjustment=adj1)
         self._fil_resonance.set_digits(2)
-        self._fil_resonance.connect("value-changed", self.on_change_param, 6)
+        self._fil_resonance.connect("value-changed", self.on_param_change, ID_RESONANCE)
 
         box.add(self._fil_resonance)
 
@@ -138,7 +149,7 @@ class MainWindow(Gtk.Window):
         for item in filenv_lst:
             self._filenv_mode.append_text(item)
         self._filenv_mode.set_active(0)
-        self._filenv_mode.connect("changed", self.on_change_param, 7)
+        self._filenv_mode.connect("changed", self.on_param_change, ID_FILTERENVMODE)
         box.add(self._filenv_mode)
 
         # Adjustments with
@@ -147,7 +158,7 @@ class MainWindow(Gtk.Window):
         self._filenv_param = Gtk.HScale(adjustment=adj1)
         # sets the number of decimal to scale
         self._filenv_param.set_digits(2)
-        self._filenv_param.connect("value-changed", self.on_change_param, 8)
+        self._filenv_param.connect("value-changed", self.on_param_change, ID_FILTERENVPARAM)
         box.add(self._filenv_param)
 
         lb1 = Gtk.Label(label="Filter Env Amount")
@@ -158,7 +169,7 @@ class MainWindow(Gtk.Window):
         # sets the number of decimal to scale
         self._filenv_amount.set_digits(3)
         # Filter Env Amount, id=9
-        self._filenv_amount.connect("value-changed", self.on_change_param, 9)
+        self._filenv_amount.connect("value-changed", self.on_param_change, ID_FILTERENVAMOUNT)
         box.add(self._filenv_amount)
  
         """
@@ -261,7 +272,7 @@ class MainWindow(Gtk.Window):
 
     #-------------------------------------------
 
-    def on_change_param(self, widget, id):
+    def on_param_change(self, widget, id):
         """
         change envelope filter param scale
         """
@@ -271,27 +282,27 @@ class MainWindow(Gtk.Window):
         index =0
         val =0
 
-        if param_index == 0: # Volume Param
+        if param_index == ID_VOLUME: # Volume Param
             val = widget.get_value()
-        elif param_index == 1: # Oscillator Mode
+        elif param_index == ID_WAVEFORM: # Oscillator Mode
             val = widget.get_active()
-        elif param_index == 2: # Envelope Stage
+        elif param_index == ID_ENVMODE: # Envelope Stage
             val = widget.get_active()
-        elif param_index == 3: # Envelope Param
+        elif param_index == ID_ENVPARAM: # Envelope Param
             index = self._env_combo.get_active()
             val = widget.get_value()
-        elif param_index == 4: # Filter Mode
+        elif param_index == ID_FILTERMODE: # Filter Mode
             val = widget.get_active()
-        elif param_index == 5: # Filter Cutoff
+        elif param_index == ID_CUTOFF: # Filter Cutoff
             val = widget.get_value()
-        elif param_index == 6: # Filter Resonance
+        elif param_index == ID_RESONANCE: # Filter Resonance
             val = widget.get_value()
-        elif param_index == 7: # Filter Env Mode
+        elif param_index == ID_FILTERENVMODE: # Filter Env Mode
             val = widget.get_active()
-        elif param_index == 8: # Filter Env Stage Scale
+        elif param_index == ID_FILTERENVPARAM: # Filter Env Param
             index = self._filenv_mode.get_active()
             val = widget.get_value()
-        elif param_index == 9: # Filter Env Amount knob
+        elif param_index == ID_FILTERENVAMOUNT: # Filter Env Amount knob
             val = widget.get_value()
 
         self.iap.change_param(param_index, index, val)
