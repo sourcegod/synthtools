@@ -10,11 +10,25 @@
 import math
 from math import sin
 from random import random, uniform as randuni
+class TMode(object):
+    """ Osc Mode object """
+    Sine =0 
+    Square =1
+    Saw =2
+    Triangle =3 
+    Silence  =4
+    WhiteNoise =5
+    PinkNoise =6
+    
+#-------------------------------------------
+
+#========================================
+
 
 
 class Oscillator(object):
     def __init__(self):
-        self._mode =0 # oscillator mode
+        self._mode = TMode.Sine # Sine mode
         self._mode_lst = [
                 "Sine", "Square", "SawTooth",
                 "Triangle", "Silence", "White Noise", 
@@ -60,8 +74,9 @@ class Oscillator(object):
     #-------------------------------------------
 
     def generate(buffer, nb_frames):
+        """ deprecated function """
         twoPI = self._twoPI
-        if self._mode == 0: # sine oscillator
+        if self._mode == TMode.Sine: # sine oscillator
             for i in range(nb_frames):
                 buffer[i] = sin(self._phase)
                 self._phase += self._phase_inc  
@@ -77,29 +92,29 @@ class Oscillator(object):
         mode = self._mode
         PI = self._PI
         twoPI = self._twoPI
-        if mode == 0: # sine osc
+        if mode == TMode.Sine: # sine osc
             value = sin(self._phase)
-        elif mode == 1: # Square Osc
+        elif mode == TMode.Square: # Square Osc
             if self._phase <= PI:
                 value = 1.0
             else:
                 value = -1.0
 
-        elif mode == 2: # SAW osc
+        elif mode == TMode.Saw: # SAW osc
             value = 1.0 - (2.0 * self._phase / twoPI)
 
-        elif mode == 3: # Triangle Osc
+        elif mode == TMode.Triangle: # Triangle Osc
             value = -1.0 + (2.0 * self._phase / twoPI)
             value = 2.0 * (abs(value) - 0.5)
         
-        elif mode == 4: # Silence
+        elif mode == TMode.Silence: # Silence
             return value
         
-        elif mode == 5: # White Noise with uniform random 
+        elif mode == TMode.WhiteNoise: # White Noise with uniform random 
             value = random() # randuni(-1, 1)
             return value
 
-        elif mode == 6: # Pink Noise with uniform random 
+        elif mode == TMode.PinkNoise: # Pink Noise with uniform random 
             value = randuni(-1, 1)
             return value
           
