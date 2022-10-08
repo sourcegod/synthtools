@@ -119,13 +119,13 @@ class InterfaceApp(object):
     
     #-------------------------------------------
 
-    def change_param(self, param_index, index, val):
+    def param_change(self, param_index, index, val):
         """
         change param value by index
         """
 
         if not self.synth: return
-        self.synth.change_param(param_index, index, val)
+        self.synth.param_change(param_index, index, val)
 
         msg = f"Index: {index}: value: {val}"
         self._notify(msg)

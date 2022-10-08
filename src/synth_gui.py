@@ -21,7 +21,7 @@ ID_ENVPARAM =3
 ID_FILTERMODE =4
 ID_CUTOFF =5
 ID_RESONANCE =6
-ID_FILTERENVMODE =7
+ID_FILTERENVMOD =7 # Filter Envelope Modulation
 ID_FILTERENVPARAM =8
 ID_FILTERENVAMOUNT =9
 
@@ -144,13 +144,13 @@ class MainWindow(Gtk.Window):
         # Filter Envelope widgets
         lb1 = Gtk.Label(label="Filter Envelope Cutoff")
         box.add(lb1)
-        self._filenv_mode = Gtk.ComboBoxText()
+        self._filenv_mod = Gtk.ComboBoxText()
         filenv_lst = ["Attack Filter", "Decay Filter", "Sustain Filter", "Release Filter", ]
         for item in filenv_lst:
-            self._filenv_mode.append_text(item)
-        self._filenv_mode.set_active(0)
-        self._filenv_mode.connect("changed", self.on_param_change, ID_FILTERENVMODE)
-        box.add(self._filenv_mode)
+            self._filenv_mod.append_text(item)
+        self._filenv_mod.set_active(0)
+        self._filenv_mod.connect("changed", self.on_param_change, ID_FILTERENVMOD)
+        box.add(self._filenv_mod)
 
         # Adjustments with
         adj1 = Gtk.Adjustment(0.1, 0.01, 10.0, 0.01, 0.1, 0.0)
@@ -251,7 +251,7 @@ class MainWindow(Gtk.Window):
         index =0
         val = widget.get_value()
         if self.iap:
-            self.iap.change_param(param_index, index, val)
+            self.iap.param_change(param_index, index, val)
 
 
     #-------------------------------------------
@@ -268,7 +268,7 @@ class MainWindow(Gtk.Window):
         # self.buf.set_text(f"Combo Index: {index}")
         if self.iap:
             # self.iap.set_mode(index)
-            self.iap.change_param(param_index, index, val)
+            self.iap.param_change(param_index, index, val)
 
     #-------------------------------------------
 
@@ -297,7 +297,7 @@ class MainWindow(Gtk.Window):
             val = widget.get_value()
         elif param_index == ID_RESONANCE: # Filter Resonance
             val = widget.get_value()
-        elif param_index == ID_FILTERENVMODE: # Filter Env Mode
+        elif param_index == ID_FILTERENVMOD: # Filter Env Modulation
             val = widget.get_active()
         elif param_index == ID_FILTERENVPARAM: # Filter Env Param
             index = self._filenv_mode.get_active()
@@ -305,7 +305,7 @@ class MainWindow(Gtk.Window):
         elif param_index == ID_FILTERENVAMOUNT: # Filter Env Amount knob
             val = widget.get_value()
 
-        self.iap.change_param(param_index, index, val)
+        self.iap.param_change(param_index, index, val)
 
     #-------------------------------------------
 

@@ -40,7 +40,7 @@ class TParam(object):
     filter_mode =4
     cutoff =5
     resonance =6
-    filter_envmode =7
+    filter_envmod =7 # Filter Env Modulation
     filter_envparam =8
     filter_envamount =9
 
@@ -237,7 +237,7 @@ class FastSynth(object):
 
     #-------------------------------------------
    
-    def change_param(self, param_index, index, val):
+    def param_change(self, param_index, index, val):
         """
         change synth param by index
         """
@@ -258,7 +258,7 @@ class FastSynth(object):
             self.set_filter_cutoff(val)
         elif param_index == TParam.resonance:
             self.set_filter_resonance(val)
-        elif param_index == TParam.filter_envmode:
+        elif param_index == TParam.filter_envmod:
             pass # No action
         elif param_index == TParam.filter_envparam:
             # change value stage for filter envelope  2
