@@ -138,7 +138,7 @@ class FastSynth(object):
         volume = self.volume
         fil_set_cutoffmode = self.filter.set_cutoffmode
         filenv_nextsample = self.filenv.next_sample
-        filenv_amount = self.filenv_amount = -1.0
+        filenv_amount = self.filenv_amount
         if self.playing:
             for i in range(nb_frames):
                 fil_set_cutoffmode(
