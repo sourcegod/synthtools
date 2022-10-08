@@ -58,12 +58,17 @@ class FastSynth(object):
         self.pl.start_stream()
         self.playing = False
         self.volume = 1.0
-        self.osc = osc.Oscillator()
+        self.osc = None
         self.envgen = env.EnvelopeGenerator()
-        # Filter Envelope
+        # Filter Envelope to modulate cutoff frequency
         self.filenv = env.EnvelopeGenerator()
         self.filenv_amount = 0.0
         self.filter = fil.Filter()
+
+        # LFO oscillator
+        self.LFO = None
+        # how much the LFO will modulate the filter's cutoff frequency
+        self.lfo_filtermod_amount = 0.1
         self.init_osc()
         self._last_note = TMessage()
 
@@ -74,9 +79,17 @@ class FastSynth(object):
         init oscillators 
         """
 
-        if self.osc:
+        if self.osc is None:
+            # only one instance
+            self.osc = osc.Oscillator()
             self.osc.set_muted(False)
             self.osc.set_mode(0) # Sine Osc 
+        if self.LFO is None:
+            # only one instance
+            self.LFO = osc.Oscillator()
+            self.LFO.set_mode(3) # Triangle Osc 
+            self.LFO.set_freq(6.0)
+            self.LFO.set_muted(False)
 
     #-------------------------------------------
 
@@ -136,13 +149,20 @@ class FastSynth(object):
         fil_process = self.filter.process
         osc_nextsample = self.osc.next_sample
         volume = self.volume
-        fil_set_cutoffmode = self.filter.set_cutoffmode
+        fil_set_cutoffmod = self.filter.set_cutoffmode
         filenv_nextsample = self.filenv.next_sample
+        # Filter Envelope Amount must be vary between -1.0 to 1.0
         filenv_amount = self.filenv_amount
+        lfo_next_sample = self.LFO.next_sample
+        lfo_filtermod_amount = self.lfo_filtermod_amount
         if self.playing:
             for i in range(nb_frames):
-                fil_set_cutoffmode(
-                    filenv_nextsample() * filenv_amount
+                # Calculate LFO Filter Modulation with a value between -1 and 1.0
+                lfo_filtermod = lfo_next_sample() * lfo_filtermod_amount
+                # the Cutoff will be modulated by both the Filter's envelope and the LFO
+                fil_set_cutoffmod((
+                    filenv_nextsample() * filenv_amount)\
+                    + lfo_filtermod
                         ) 
                 val = fil_process( 
                     osc_nextsample() * env_nextsample() * volume
