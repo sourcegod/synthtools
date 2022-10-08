@@ -61,8 +61,8 @@ class FastSynth(object):
         self.osc = None
         self.envgen = env.EnvelopeGenerator()
         # Filter Envelope to modulate cutoff frequency
-        self.filenv = env.EnvelopeGenerator()
-        self.filenv_amount = 0.0
+        self.filter_env = env.EnvelopeGenerator()
+        self.filter_env_amount = 0.0
         self.filter = fil.Filter()
 
         # LFO oscillator
@@ -145,27 +145,27 @@ class FastSynth(object):
         """
 
         # for performance without lookup rattribute
-        env_nextsample = self.envgen.next_sample
-        fil_process = self.filter.process
+        envgen_nextsample = self.envgen.next_sample
+        filter_process = self.filter.process
         osc_nextsample = self.osc.next_sample
         volume = self.volume
-        fil_set_cutoffmod = self.filter.set_cutoffmode
-        filenv_nextsample = self.filenv.next_sample
+        filter_set_cutoffmod = self.filter.set_cutoffmode
+        filter_env_nextsample = self.filter_env.next_sample
         # Filter Envelope Amount must be vary between -1.0 to 1.0
-        filenv_amount = self.filenv_amount
-        lfo_next_sample = self.LFO.next_sample
+        filter_env_amount = self.filter_env_amount
+        lfo_nextsample = self.LFO.next_sample
         lfo_filtermod_amount = self.lfo_filtermod_amount
         if self.playing:
             for i in range(nb_frames):
                 # Calculate LFO Filter Modulation with a value between -1 and 1.0
-                lfo_filtermod = lfo_next_sample() * lfo_filtermod_amount
+                lfo_filtermod = lfo_nextsample() * lfo_filtermod_amount
                 # the Cutoff will be modulated by both the Filter's envelope and the LFO
-                fil_set_cutoffmod((
-                    filenv_nextsample() * filenv_amount)\
+                filter_set_cutoffmod((
+                    filter_env_nextsample() * filter_env_amount)\
                     + lfo_filtermod
                         ) 
-                val = fil_process( 
-                    osc_nextsample() * env_nextsample() * volume
+                val = filter_process( 
+                    osc_nextsample() * envgen_nextsample() * volume
                         )
                 outdata[i] = val
         
@@ -262,9 +262,9 @@ class FastSynth(object):
             pass # No action
         elif param_index == TParam.filter_envparam:
             # change value stage for filter envelope  2
-            self.filenv.set_stage_value(index+1, val)
+            self.filter_env.set_stage_value(index+1, val)
         elif param_index == TParam.filter_envamount:
-            self.filenv_amount = val
+            self.filter_env_amount = val
 
     #-------------------------------------------
 
@@ -277,7 +277,7 @@ class FastSynth(object):
             freq = mid2freq(note)
             self.osc.set_freq(freq)
             self.envgen.enter_stage(self.envgen._stage_attack) # Attack stage
-            self.filenv.enter_stage(self.envgen._stage_attack) # Attack stage
+            self.filter_env.enter_stage(self.envgen._stage_attack) # Attack stage
         self.playing = True
         # print("Playing Note...")
 
@@ -289,7 +289,7 @@ class FastSynth(object):
         self._last_note.note = note
         self._last_note.vel = vel
         self.envgen.enter_stage(self.envgen._stage_release) # Release stage
-        self.filenv.enter_stage(self.envgen._stage_release)
+        self.filter_env.enter_stage(self.envgen._stage_release)
         
         # self.playing = False
         # print("Stopping Note...")
