@@ -86,6 +86,7 @@ class Oscillator(object):
     #-------------------------------------------
 
     def next_sample(self):
+        """ returns next sample value """
         value = 0.0
         if self._is_muted: return value
         
