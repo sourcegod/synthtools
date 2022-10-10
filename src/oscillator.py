@@ -26,7 +26,6 @@ class TMode(object):
 #========================================
 
 
-
 class Oscillator(object):
     def __init__(self):
         self._mode = TMode.Sine # Sine mode

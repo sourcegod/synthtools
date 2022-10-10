@@ -12,16 +12,22 @@ import oscillator as osc
 import streamplayer as spl
 import envelopegenerator as env
 import filter as fil
+import midutils
+# get freq by index in a list, more rapid than calculate the freq
+mid2freq = midutils.mid2freq_index
 
 def beep():
     print("\a")
 
 #-------------------------------------------
 
+"""
 def mid2freq(note):
+    ### Deprecated function
     return 440.0 * pow(2, (note - 69) / 12.0)
 
 #-------------------------------------------
+"""
 
 class TMessage(object):
     def __init__(self, note=0, vel=0):

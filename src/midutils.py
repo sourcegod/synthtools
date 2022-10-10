@@ -63,6 +63,17 @@ def mid2freq(val):
 
 #-----------------------------------------
 
+def mid2freq_index(val):
+    """ Returns freq from list  by midi note number """
+    # _freq_lst must be initialized
+    # val = limit_value(val, 0, 127)
+    try:
+        return _freq_lst[val]
+    except IndexError:
+        return 0
+
+#-----------------------------------------
+
 def mid2note(val):
     """ convert midi number to note name """
     try:
