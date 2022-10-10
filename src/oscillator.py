@@ -14,11 +14,12 @@ class TMode(object):
     """ Osc Mode object """
     Sine =0 
     Square =1
-    Saw =2
-    Triangle =3 
-    Silence  =4
-    WhiteNoise =5
-    PinkNoise =6
+    Pulse =2
+    Saw =3
+    Triangle =4
+    Silence  =5
+    WhiteNoise =6
+    PinkNoise =7
     
 #-------------------------------------------
 
@@ -30,7 +31,7 @@ class Oscillator(object):
     def __init__(self):
         self._mode = TMode.Sine # Sine mode
         self._mode_lst = [
-                "Sine", "Square", "SawTooth",
+                "Sine", "Square", "Pulse", "SawTooth",
                 "Triangle", "Silence", "White Noise", 
                 "Pink Noise",
             ]
@@ -96,7 +97,12 @@ class Oscillator(object):
         if mode == TMode.Sine: # sine osc
             value = sin(self._phase)
         elif mode == TMode.Square: # Square Osc
-            if self._phase <= PI:
+            if self._phase <= PI: # 0.5 * twoPI, 50% of cycle
+                value = 1.0
+            else:
+                value = -1.0
+        elif mode == TMode.Pulse: # Pulse Osc
+            if self._phase <= (0.8 * twoPI) : # 80% of cycle
                 value = 1.0
             else:
                 value = -1.0
