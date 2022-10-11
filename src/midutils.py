@@ -184,12 +184,17 @@ def play_midi(inport=0, outport=0, printing=False):
     midi_in = open_input(inport)
     midi_out = open_output(outport)
 
+    if not midi_in and not midi_out:
+        return
+
     print("Press a keyboard's key...")
     print("---------------------")
     
     try:
         while True:
-            msg = midi_in.poll()
+            msg = None
+            if midi_in:
+                msg = midi_in.poll()
             if msg:
                 m_type = msg.type
                 if m_type in ['note_on', 'note_off']:
@@ -210,7 +215,7 @@ def play_midi(inport=0, outport=0, printing=False):
                     if printing:
                         print("Unknown message")
                         print(f"Details: {msg}")
-                if  midi_out:
+                if  midi_out and msg:
                     midi_out.send(msg)
                     if printing: 
                         print("Midi_out message.")
@@ -240,6 +245,7 @@ def print_output_names():
     print("---------------------")
 
 #-------------------------------------------
+
 def _midi_handler(msg, inport=0, outport=0, printing=False):
     """ 
     Handling midi messages 
@@ -284,16 +290,22 @@ def _midi_handler(msg, inport=0, outport=0, printing=False):
 
 #-------------------------------------------
 
-def start_midi_thread(inport=0, outport=0, func=None):
+def start_midi_thread(inport=-1, outport=-1, func=None):
     """
     Attach callback function to the Midi port Callback
+    Port = -1: means no Midi Port
     """
+
     global _midi_in, _midi_out, _midi_running
-    _midi_in = open_input(inport)
+    if inport != -1:
+        _midi_in = open_input(inport)
+        _midi_in.callback = func
+        _midi_running = True
+    
     # func = _midi_handler
-    _midi_in.callback = func
-    _midi_out = open_output(outport)
-    _midi_running = True
+    if outport != -1:
+        _midi_out = open_output(outport)
+        _midi_running = True
     
     return (_midi_in, _midi_out)
 #-------------------------------------------
