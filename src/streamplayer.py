@@ -11,7 +11,7 @@ import sounddevice as sd
 
 class Player(object):
     """ Simple player """
-    def __init__(self, device_index = (None, None), rate=44100, channels=1):
+    def __init__(self, device_index = (None, None), rate=44100, channels=1, debug=0):
         self._rate = rate
         self._channels = channels
         self._buffer_size = 1024 # 512 for each channel
@@ -20,7 +20,9 @@ class Player(object):
         self._thr = None
         self._stream = None
 
-        print(sd.query_devices())
+        if debug:
+            print(sd.query_devices())
+        
         if sd.query_devices(device=device_index[1]):
             sd.default.device = device_index
             print("Query Device index is: ", sd.default.device)

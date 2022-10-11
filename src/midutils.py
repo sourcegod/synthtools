@@ -133,7 +133,7 @@ def open_input(port=0):
     if portname:
         print("Found Midi Input name: ",portname)
         midi_in = mido.open_input(portname)
-        
+
     return midi_in
 
 #-----------------------------------------
@@ -297,13 +297,17 @@ def start_midi_thread(inport=-1, outport=-1, func=None):
     """
 
     global _midi_in, _midi_out, _midi_running
-    if inport != -1:
+    if inport == -1:
+        print("No Midi Input is available.")
+    else:
         _midi_in = open_input(inport)
         _midi_in.callback = func
         _midi_running = True
     
     # func = _midi_handler
-    if outport != -1:
+    if outport == -1:
+        print("No Midi Output is available.")
+    else:
         _midi_out = open_output(outport)
         _midi_running = True
     

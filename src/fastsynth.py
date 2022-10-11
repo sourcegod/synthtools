@@ -12,22 +12,22 @@ import oscillator as osc
 import streamplayer as spl
 import envelopegenerator as env
 import filter as fil
-import midutils
+import midutils as mid
 # get freq by index in a list, more rapid than calculate the freq
-mid2freq = midutils.mid2freq_index
+mid2freq = mid.mid2freq_index
 
 def beep():
     print("\a")
 
 #-------------------------------------------
 
-"""
-def mid2freq(note):
+# """
+def _mid2freq(note):
     ### Deprecated function
     return 440.0 * pow(2, (note - 69) / 12.0)
 
 #-------------------------------------------
-"""
+# """
 
 class TMessage(object):
     def __init__(self, note=0, vel=0):
@@ -275,8 +275,12 @@ class FastSynth(object):
     #-------------------------------------------
 
     def note_on(self, note=60, vel=127):
+        
+        """
         if self._last_note.note != note:
             print("Playing Note: ", note)
+        """
+
         if self._last_note.vel == 0:
             self._last_note.note = note
             self._last_note.vel = vel
@@ -290,8 +294,12 @@ class FastSynth(object):
     #-------------------------------------------
 
     def note_off(self, note=60, vel=0):
+        
+        """
         if self._last_note.note != note:
             print("Stopping Note: ", note)
+        """
+
         self._last_note.note = note
         self._last_note.vel = vel
         self.envgen.enter_stage(self.envgen._stage_release) # Release stage
